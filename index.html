@@ -1,0 +1,2507 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CMSC · Private Wealth Portal</title>
+
+<style>
+/* ============================================================
+   GOV.UK / HMRC DESIGN TOKENS
+   ============================================================ */
+:root {
+  --brand: #1d70b8;
+  --brand-accent: #00ffe0;
+  --hmrc-crest: #008670;
+
+  --text: #0b0c0c;
+  --secondary-text: #484949;
+  --body-background: #ffffff;
+  --surface-background: #f4f8fb;
+  --surface-border: #8eb8dc;
+
+  --link: #1a65a6;
+  --link-hover: #0f385c;
+  --link-visited: #54319f;
+
+  --action-green: #0f7a52;
+  --action-green-hover: #0b5c3e;
+
+  --focus: #ffdd00;
+  --error: #ca3535;
+
+  --font-family: "GDS Transport", Arial, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+
+  --max-width: 1200px;
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --text: #ffffff;
+  --secondary-text: #b1b4b6;
+  --body-background: #0b0c0c;
+  --surface-background: #1d1e1f;
+  --surface-border: #383f43;
+  --link: #5694ca;
+  --link-hover: #8eb8dc;
+  --link-visited: #c8a5f0;
+  color-scheme: dark;
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--body-background);
+  color: var(--text);
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: var(--font-weight-regular);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p { margin: 0; }
+
+h1 {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 16px;
+}
+
+h3 {
+  font-size: 19px;
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 8px;
+}
+
+p, .muted {
+  color: var(--secondary-text);
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.money {
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   LINKS
+   ============================================================ */
+a, .link {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 0.1em;
+}
+a:hover, .link:hover { color: var(--link-hover); }
+a:visited, .link:visited { color: var(--link-visited); }
+a:focus, .link:focus {
+  outline: 3px solid transparent;
+  color: var(--text);
+  background-color: var(--focus);
+  box-shadow: 0 -2px var(--focus), 0 4px var(--text);
+  text-decoration: none;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+button, .btn {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: var(--font-weight-regular);
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 0;
+  padding: 8px 16px;
+  background: var(--action-green);
+  color: #ffffff;
+  box-shadow: 0 2px 0 var(--action-green-hover);
+  transition: background-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  line-height: 1.2;
+}
+button:hover, .btn:hover { background: var(--action-green-hover); }
+button:focus, .btn:focus {
+  outline: 3px solid var(--focus);
+  outline-offset: 0;
+  box-shadow: 0 2px 0 var(--text);
+  background: var(--action-green-hover);
+}
+button:disabled, .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn.start {
+  font-size: 19px;
+  font-weight: var(--font-weight-bold);
+  padding: 12px 20px;
+  margin: 8px 0 24px;
+}
+
+.btn.ghost {
+  background: transparent;
+  color: var(--link);
+  border-color: var(--link);
+  box-shadow: none;
+}
+.btn.ghost:hover {
+  background: var(--surface-background);
+  color: var(--link-hover);
+  border-color: var(--link-hover);
+}
+
+.btn.danger {
+  background: var(--error);
+  color: white;
+  box-shadow: 0 2px 0 #8a1e1e;
+}
+.btn.danger:hover { background: #8a1e1e; }
+
+.btn.small {
+  font-size: 14px;
+  padding: 6px 12px;
+}
+
+/* ============================================================
+   FORM FIELDS
+   ============================================================ */
+.field { margin-bottom: 20px; }
+
+.field label {
+  display: block;
+  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.field input, .field select, .search {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid var(--text);
+  border-radius: 0;
+  background: var(--body-background);
+  color: var(--text);
+  font-family: var(--font-family);
+  font-size: 16px;
+  transition: outline 0.15s;
+}
+
+.field input:focus, .field select:focus, .search:focus {
+  outline: 3px solid var(--focus);
+  outline-offset: 0;
+  box-shadow: inset 0 0 0 2px var(--text);
+}
+
+.field.error input {
+  border-color: var(--error);
+  box-shadow: inset 0 0 0 1px var(--error);
+}
+.error-message, .error {
+  color: var(--error);
+  font-weight: var(--font-weight-bold);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* ============================================================
+   SURFACES & PANELS
+   ============================================================ */
+.panel {
+  background: var(--body-background);
+  border: 1px solid var(--surface-border);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.surface {
+  background: var(--surface-background);
+  border: 1px solid var(--surface-border);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.row { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.stack { display: grid; gap: 16px; }
+.grid { display: grid; gap: 24px; }
+.two { grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr); }
+.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.space { height: 16px; }
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.panel-head h2 { margin-bottom: 0; }
+
+.pagehead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+.pagehead p { margin: 8px 0 0; }
+
+.divider {
+  border: 0;
+  border-top: 1px solid var(--surface-border);
+  margin: 24px 0;
+}
+
+.notice {
+  background: var(--surface-background);
+  border-left: 4px solid var(--brand);
+  padding: 16px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  padding: 3px 8px;
+  background: var(--surface-background);
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.tag.success { background: var(--action-green); color: #fff; }
+.tag.warning { background: #b45309; color: #fff; }
+
+/* ============================================================
+   HMRC BANNER
+   ============================================================ */
+.hmrc-banner {
+  background: var(--text);
+  color: #ffffff;
+  border-bottom: 10px solid var(--brand);
+}
+.hmrc-banner-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px clamp(16px, 4vw, 48px);
+}
+.hmrc-banner-inner svg {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+}
+.hmrc-banner-inner .cls-1 { fill: #ffffff; }
+.hmrc-banner-inner p {
+  margin: 0;
+  font-size: 22px;
+  font-weight: var(--font-weight-bold);
+  color: #ffffff;
+  letter-spacing: 0.01em;
+}
+
+/* Global search bar */
+.global-search {
+  background: var(--surface-background);
+  border-bottom: 1px solid var(--surface-border);
+}
+.global-search__inner {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 16px clamp(16px, 4vw, 48px);
+}
+.global-search input {
+  flex: 1;
+  border: 2px solid var(--text);
+  border-right: 0;
+  padding: 10px 12px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  background: var(--body-background);
+  color: var(--text);
+}
+.global-search input:focus {
+  outline: 3px solid var(--focus);
+  outline-offset: 0;
+}
+.global-search button {
+  border: 2px solid var(--text);
+  background: var(--text);
+  color: var(--body-background);
+  padding: 10px 20px;
+  font-weight: var(--font-weight-bold);
+  box-shadow: none;
+}
+.global-search button:hover { background: var(--link-hover); }
+
+/* ============================================================
+   SHELL
+   ============================================================ */
+.shell {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  min-height: 100vh;
+}
+.sidebar {
+  background: var(--brand);
+  color: #ffffff;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+}
+.sidebar__role {
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brand-accent);
+  padding: 0 12px;
+}
+.nav { display: flex; flex-direction: column; gap: 2px; }
+.navbutton {
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  border-radius: 0;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  transition: background 0.15s;
+  text-decoration: none;
+  font-family: var(--font-family);
+  cursor: pointer;
+  box-shadow: none;
+  width: 100%;
+  line-height: 1.3;
+  justify-content: flex-start;
+}
+.navbutton:hover { background: rgba(255,255,255,0.1); }
+.navbutton.active {
+  background: rgba(255,255,255,0.2);
+  font-weight: var(--font-weight-bold);
+}
+.navbutton:focus {
+  outline: 3px solid var(--focus);
+  background: rgba(255,255,255,0.2);
+  color: var(--text);
+  box-shadow: 0 -2px var(--focus), 0 4px var(--text);
+}
+.navicon { font-size: 14px; width: 16px; text-align: left; flex-shrink: 0; }
+
+.sidebar-bottom { margin-top: auto; }
+.profile {
+  border-top: 1px solid rgba(255,255,255,0.2);
+  padding: 16px 8px 0;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.avatar {
+  background: var(--brand-accent);
+  color: var(--text);
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.topbar {
+  height: 64px;
+  background: var(--body-background);
+  border-bottom: 1px solid var(--surface-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(16px, 4vw, 48px);
+  gap: 16px;
+}
+.chip {
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  background: var(--surface-background);
+  color: var(--text);
+  padding: 4px 10px;
+}
+.main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 32px clamp(16px, 4vw, 48px) 80px;
+}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+.login {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.login-art {
+  background: var(--brand);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px;
+  position: relative;
+  overflow: hidden;
+}
+.login-art:after {
+  content: '';
+  position: absolute;
+  border: 1px solid rgba(255,255,255,0.15);
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  right: -250px;
+  bottom: -250px;
+  pointer-events: none;
+}
+.login-art > * { position: relative; z-index: 1; }
+.login-art h1 { color: #ffffff; font-size: clamp(32px, 4vw, 56px); margin-top: 24px; }
+.login-art h1 em { color: var(--brand-accent); font-style: normal; }
+.login-art p { color: #e8e8e8; max-width: 400px; }
+.login-right {
+  background: var(--body-background);
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+.login-form { width: min(100%, 400px); }
+.login-controls { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 32px; }
+
+/* ============================================================
+   DASHBOARD & PERSONA
+   ============================================================ */
+.balance {
+  background: var(--brand);
+  color: #ffffff;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 240px;
+}
+.balance .eyebrow { color: #e8e8e8; }
+.balance .money { font-size: clamp(36px, 4vw, 56px); margin: 12px 0; color: #ffffff; }
+.balance p { color: #e8e8e8; }
+
+.quick { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.quick button {
+  background: var(--surface-background);
+  border: 1px solid var(--surface-border);
+  padding: 16px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: var(--font-weight-bold);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s;
+  box-shadow: none;
+}
+.quick button:hover { background: var(--body-background); }
+.quick button span { display: block; color: var(--brand); font-size: 22px; margin-bottom: 8px; }
+
+.stat .money { font-size: 28px; margin: 8px 0; }
+
+.persona-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.persona {
+  border: 1px solid var(--surface-border);
+  padding: 20px;
+  background: var(--body-background);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.persona h3 { margin: 0; }
+.persona p { margin: 0; font-size: 14px; }
+.persona__links { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.persona__links a { font-size: 15px; }
+
+.browse { display: grid; gap: 0; border-top: 1px solid var(--surface-border); }
+.browse__item {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--surface-border);
+}
+.browse__item h3 { margin: 0; }
+.browse__item ul { margin: 0; padding-left: 20px; }
+.browse__item li { margin-bottom: 4px; }
+
+.gateway {
+  border: 2px solid var(--text);
+  padding: 24px;
+  margin: 24px 0;
+}
+.gateway h2 { margin-bottom: 8px; }
+.gateway .btn.start { margin-top: 16px; margin-bottom: 0; }
+
+.breadcrumbs {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  font-size: 14px;
+}
+.breadcrumbs li { display: flex; align-items: center; gap: 8px; }
+.breadcrumbs li + li::before { content: "›"; color: var(--secondary-text); }
+.breadcrumbs a { color: var(--link); }
+
+/* ============================================================
+   TRANSACTIONS
+   ============================================================ */
+.tx {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--surface-border);
+}
+.tx:last-child { border-bottom: 0; }
+.txicon {
+  width: 40px;
+  height: 40px;
+  background: var(--surface-background);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: var(--brand);
+}
+.txbody { flex: 1; min-width: 0; }
+.txbody strong { display: block; font-size: 16px; font-weight: var(--font-weight-bold); }
+.txbody small { color: var(--secondary-text); font-size: 14px; }
+.txamount { text-align: right; white-space: nowrap; font-size: 16px; font-weight: var(--font-weight-bold); font-variant-numeric: tabular-nums; }
+.tx-delete {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+  background: var(--surface-background);
+  color: var(--secondary-text);
+  font-size: 18px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: none;
+}
+.tx-delete:hover { background: var(--error); color: white; }
+.positive { color: var(--action-green); }
+:root[data-theme="dark"] .positive { color: #34D399; }
+
+/* ============================================================
+   CHARTS
+   ============================================================ */
+.chart { height: 140px; display: flex; align-items: end; gap: 6px; border-bottom: 2px solid var(--text); margin-top: 16px; }
+.bar { flex: 1; min-height: 4px; background: var(--surface-border); border: 0; padding: 0; transition: height 0.2s, background 0.2s; box-shadow: none; }
+.bar:hover, .bar.active { background: var(--brand); }
+.chartlabels { display: flex; justify-content: space-between; color: var(--secondary-text); font-size: 12px; margin-top: 8px; }
+.chart-controls { display: flex; gap: 4px; }
+.chart-controls button { background: var(--surface-background); border: 1px solid var(--surface-border); color: var(--text); padding: 4px 10px; font-size: 12px; cursor: pointer; box-shadow: none; }
+.chart-controls button.active { background: var(--brand); color: white; border-color: var(--brand); }
+.chartdetail { min-height: 20px; color: var(--secondary-text); font-size: 14px; margin-top: 12px; }
+
+/* ============================================================
+   REVIEWS, PAYEES, STEPS
+   ============================================================ */
+.reviewline { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--surface-border); padding: 12px 0; font-size: 16px; }
+.reviewline strong { text-align: right; font-weight: var(--font-weight-bold); }
+.reviewline span { color: var(--secondary-text); }
+.payee { display: flex; justify-content: space-between; gap: 16px; align-items: center; border-bottom: 1px solid var(--surface-border); padding: 16px 0; }
+.payee:last-child { border-bottom: 0; }
+.payee strong { font-size: 16px; font-weight: var(--font-weight-bold); }
+.payee small { display: block; color: var(--secondary-text); font-size: 14px; }
+.steps { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.step { padding: 6px 12px; font-size: 12px; font-weight: var(--font-weight-bold); background: var(--surface-background); color: var(--text); }
+.step.active { background: var(--brand); color: white; }
+.filterrow { display: grid; grid-template-columns: 1fr 180px; gap: 16px; margin-bottom: 16px; }
+
+/* ============================================================
+   DOCUMENTS
+   ============================================================ */
+.dropzone {
+  border: 2px dashed var(--brand);
+  padding: 40px;
+  text-align: center;
+  background: var(--surface-background);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.dropzone:hover, .dropzone.dragover { background: var(--body-background); border-color: var(--text); }
+.dropzone-icon { font-size: 36px; color: var(--brand); margin-bottom: 16px; }
+.doc-list { margin-top: 24px; }
+.doc-item { display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 1px solid var(--surface-border); margin-bottom: 8px; background: var(--body-background); }
+.doc-info { display: flex; align-items: center; gap: 12px; }
+.doc-icon { font-size: 24px; color: var(--brand); }
+.doc-name { font-weight: var(--font-weight-bold); font-size: 16px; }
+.doc-meta { font-size: 13px; color: var(--secondary-text); }
+.doc-actions { display: flex; gap: 8px; }
+
+/* ============================================================
+   TAX CALCULATOR
+   ============================================================ */
+.tax-step { margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--surface-border); }
+.tax-step:last-child { border-bottom: 0; }
+.tax-step-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; color: var(--text); }
+.tax-radio-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+.tax-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 2px solid var(--surface-border);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  font-weight: 400;
+}
+.tax-radio-label:hover { border-color: var(--text); }
+.tax-radio-label input[type="radio"] { width: 24px; height: 24px; accent-color: var(--text); }
+.tax-radio-label.selected { border-color: var(--text); background: var(--surface-background); font-weight: 700; }
+.tax-input-group { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; }
+.tax-input-group span { font-size: 32px; font-weight: 700; }
+.tax-input-group input {
+  font-size: 32px;
+  padding: 8px 12px;
+  border: 2px solid var(--text);
+  width: 100%;
+  font-weight: 700;
+  background: var(--body-background);
+  color: var(--text);
+  font-family: var(--font-family);
+}
+.tax-input-group input:focus { outline: 3px solid var(--focus); outline-offset: 0; }
+.tax-results { background: var(--surface-background); padding: 32px; border: 1px solid var(--surface-border); margin-top: 24px; }
+.tax-result-row { display: flex; justify-content: space-between; padding: 12px 0; font-size: 18px; border-bottom: 1px solid var(--surface-border); }
+.tax-result-row:last-child { border-bottom: 0; padding-top: 24px; font-weight: 700; font-size: 24px; }
+.tax-result-row span { color: var(--text); }
+.tax-result-row strong { font-variant-numeric: tabular-nums; }
+
+/* ============================================================
+   TOAST / DRAWER
+   ============================================================ */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  background: var(--text);
+  color: var(--body-background);
+  padding: 16px 24px;
+  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.tx[data-tx-index] { cursor: pointer; }
+.tx[data-tx-index]:hover { background: var(--surface-background); }
+.detail-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 80;
+  display: flex;
+  justify-content: flex-end;
+}
+.detail-drawer {
+  width: min(100%, 480px);
+  height: 100%;
+  overflow-y: auto;
+  background: var(--body-background);
+  padding: 32px;
+  border-left: 2px solid var(--text);
+}
+.detail-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+.detail-close {
+  width: 36px; height: 36px;
+  background: var(--surface-background);
+  border: 2px solid var(--text);
+  font-size: 22px;
+  display: grid; place-items: center;
+  cursor: pointer;
+  box-shadow: none;
+}
+.detail-value { font-size: clamp(32px, 6vw, 48px); font-weight: var(--font-weight-bold); margin: 12px 0; font-variant-numeric: tabular-nums; }
+.detail-line { display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--surface-border); font-size: 16px; }
+.detail-line span { color: var(--secondary-text); }
+.detail-line strong { text-align: right; font-weight: var(--font-weight-bold); white-space: pre-line; }
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+.hidden { display: none !important; }
+.empty { padding: 24px 0; color: var(--secondary-text); font-size: 16px; }
+.tiny { font-size: 12px; }
+.eyebrow {
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--secondary-text);
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1080px) {
+  .two, .three, .persona-grid { grid-template-columns: 1fr; }
+  .browse__item { grid-template-columns: 1fr; gap: 8px; }
+}
+@media (max-width: 800px) {
+  .login { grid-template-columns: 1fr; }
+  .login-art { display: none; }
+  .shell { display: block; }
+  .sidebar {
+    height: auto;
+    position: relative;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 16px;
+  }
+  .sidebar .brand { width: 100%; justify-content: center; margin-bottom: 8px; }
+  .sidebar-bottom { display: none; }
+  .nav { display: flex; flex-direction: row; overflow-x: auto; width: 100%; gap: 8px; padding-bottom: 8px; }
+  .navbutton { white-space: nowrap; padding: 8px 12px; }
+  .topbar { height: 56px; }
+  .chip { display: none; }
+  .main { padding: 24px 16px 64px; }
+  .panel { padding: 16px; }
+  .pagehead { flex-direction: column; align-items: flex-start; }
+  .filterrow { grid-template-columns: 1fr; }
+  .wealth-kpis { grid-template-columns: 1fr; }
+  .doc-item { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .doc-actions { width: 100%; justify-content: flex-end; }
+}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+<script>
+
+'use strict';
+
+/* ============================================================
+   CMSC PRIVATE WEALTH PORTAL
+   ============================================================ */
+
+const DEMO = {
+  SESSION_MS: 30 * 60 * 1000,
+  MAX_TX: 200,
+  STORAGE_KEY: 'cmsc_demo_bank_v1_account',
+  CLIENT_EMAIL: 'anniebrachmann@gmail.com',
+  DEFAULT_PASSWORD: 'Annie123456',
+  MAX_DOC_SIZE: 2 * 1024 * 1024
+};
+
+const $ = id => document.getElementById(id);
+const app = $('app');
+
+/* ============================================================
+   TRANSLATIONS
+   ============================================================ */
+const EN = {
+  Live: 'Live',
+  Data: 'Data',
+  welcome: 'Welcome back.',
+  welcomeSub: 'Your personal tax account, guidance and services in one place.',
+  login: 'Sign in to your HMRC account',
+  username: 'Username',
+  password: 'Password',
+  loginButton: 'Sign in',
+  processing: 'Processing…',
+  heroSub: 'Guidance, calculators and secure services for individuals, businesses and agents.',
+  overview: 'Home',
+  payments: 'Payments',
+  transactions: 'Transactions',
+  beneficiaries: 'Payees',
+  tax: 'Tax calculator',
+  notifications: 'Messages',
+  settings: 'Account settings',
+  documents: 'Documents',
+  balance: 'Available balance',
+  income: 'Money in',
+  expenses: 'Money out',
+  quick: 'Quick actions',
+  send: 'Make a payment',
+  history: 'Transactions',
+  historySub: 'Every movement in and out of your account.',
+  recent: 'Recent activity',
+  seeAll: 'View all',
+  analytics: 'Spending insights',
+  analyticsSub: 'Explore your spending over time.',
+  saved: 'Saved payees',
+  savedSub: 'Manage your trusted recipients.',
+  inbox: 'Messages',
+  inboxSub: 'Stay informed about account activity.',
+  profile: 'Account settings',
+  profileSub: 'Your account and preferences.',
+  holder: 'Account holder',
+  privateClient: 'Individual taxpayer',
+  session: 'Live session',
+  currency: 'Currency',
+  language: 'Language',
+  theme: 'Appearance',
+  logout: 'Sign out',
+  amount: 'Amount',
+  recipient: 'Recipient name',
+  iban: 'Recipient IBAN',
+  reference: 'Payment reference',
+  timing: 'Transfer timing',
+  now: 'Send now',
+  later: 'Schedule for later',
+  date: 'Scheduled date',
+  next: 'Continue',
+  back: 'Back',
+  review: 'Review payment',
+  confirm: 'Confirm Transfer',
+  paymentSuccess: 'Transfer submitted',
+  newPayment: 'Make another payment',
+  paymentDetails: 'Payment details',
+  reviewDetails: 'Review transfer',
+  search: 'Search transactions',
+  all: 'All',
+  incoming: 'Incoming',
+  outgoing: 'Outgoing',
+  export: 'Export CSV',
+  noTransactions: 'No matching transactions.',
+  noPayees: 'No saved payees yet.',
+  remove: 'Remove',
+  pay: 'Pay',
+  readAll: 'Mark all as read',
+  noNotifications: 'You have no messages.',
+  copy: 'Copy IBAN',
+  copied: 'IBAN copied.',
+  scheduled: 'Scheduled',
+  posted: 'Posted',
+  declined: 'Declined',
+  account: 'Account',
+  details: 'Details',
+  close: 'Close',
+  status: 'Status',
+  category: 'Category',
+  transactionDate: 'Transaction date',
+  transactionId: 'Transaction reference',
+  paymentType: 'Transfer',
+  paymentNote: 'Make sure the details are correct.',
+  available: 'Available',
+  simulation: 'CMSC Private Wealth is a demonstration environment. No real money moves and no real client data is held.',
+  notificationNotice: 'Messages are generated within this account.',
+  netWorth: 'Total net worth',
+  netWorthSub: 'Your complete financial position, in one place.',
+  cash: 'Everyday banking',
+  investments: 'Investments',
+  savings: 'Savings',
+  portfolio: 'Investment portfolio',
+  portfolioSub: 'Explore your investments and performance.',
+  performance: 'Portfolio performance',
+  allocation: 'Asset allocation',
+  holdings: 'Your holdings',
+  viewHoldings: 'View holdings',
+  wealthSummary: 'Wealth summary',
+  asset: 'Asset',
+  assetClass: 'Asset class',
+  units: 'Units',
+  unitPrice: 'Unit price',
+  marketValue: 'Market value',
+  costBasis: 'Cost basis',
+  gainLoss: 'Unrealized gain / loss',
+  return: 'Return',
+  portfolioValue: 'Portfolio value',
+  goals: 'Savings goals',
+  goalsSub: 'Plan and track your financial milestones.',
+  createGoal: 'Create savings goal',
+  goalName: 'Goal name',
+  goalTarget: 'Target amount',
+  remaining: 'Remaining',
+  contribute: 'Add contribution',
+  contributionAmount: 'Contribution amount',
+  newGoal: 'New savings goal',
+  goalCreated: 'Savings goal created.',
+  contributionSaved: 'Contribution recorded.',
+  noGoals: 'No savings goals yet.',
+  goalNotice: 'Contributions transfer cash into savings. Total net worth remains unchanged.',
+  oneMonth: '1M', threeMonths: '3M', sixMonths: '6M', oneYear: '1Y', allTime: 'All',
+  documentsTitle: 'Your documents',
+  documentsSub: 'Securely upload and manage your records.',
+  uploadDocument: 'Upload a document',
+  dropzoneText: 'Drag and drop your file here, or click to browse.',
+  dropzoneHint: 'Max file size: 2MB. PDF, JPG, PNG.',
+  noDocuments: 'No documents uploaded yet.',
+  deleteDoc: 'Delete',
+  downloadDoc: 'View',
+  uploadSuccess: 'Document uploaded successfully.',
+  uploadError: 'File too large. Max size is 2MB.',
+  docDeleted: 'Document deleted.',
+  taxTitle: 'Estimate your take-home pay',
+  taxSub: 'Estimate your take-home pay after Income Tax and National Insurance.',
+  taxPayFrequency: 'How often are you paid this amount?',
+  taxAmount: 'How much do you get paid?',
+  taxCalculate: 'Calculate take-home pay',
+  taxResults: 'Your take-home pay',
+  taxGross: 'Gross pay',
+  taxTax: 'Income Tax',
+  taxNI: 'National Insurance',
+  taxTakeHome: 'Take-home pay',
+  taxYearly: 'Yearly', taxMonthly: 'Monthly', taxWeekly: 'Weekly',
+  taxYear: 'per year', taxMonth: 'per month', taxWeek: 'per week'
+};
+
+const TRANSLATIONS = { en: {} };
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const S = {
+  token: sessionStorage.getItem('cmsc_token') || '',
+  data: null,
+  page: 'overview',
+  lang: 'en',
+  theme: localStorage.getItem('cmsc_theme') || 'light',
+  period: 'month',
+  wealthPeriod: 'year',
+  filter: 'all',
+  search: '',
+  step: 1,
+  draft: null,
+  busy: false,
+  taxData: null
+};
+if (!['dark', 'light'].includes(S.theme)) S.theme = 'light';
+document.documentElement.dataset.theme = S.theme;
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+function t(key) { return TRANSLATIONS[S.lang]?.[key] || EN[key] || key; }
+function esc(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+function money(value) {
+  return new Intl.NumberFormat(S.lang, { style: 'currency', currency: 'GBP' }).format(Number(value) || 0);
+}
+function compactMoney(value) {
+  return new Intl.NumberFormat(S.lang, { style: 'currency', currency: 'GBP', notation: 'compact', maximumFractionDigits: 1 }).format(Number(value) || 0);
+}
+function percent(value) {
+  return new Intl.NumberFormat(S.lang, { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value) || 0);
+}
+function fmtDate(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+  return new Intl.DateTimeFormat(S.lang, { day: 'numeric', month: 'short', year: 'numeric' }).format(date);
+}
+function uuid() {
+  if (window.crypto?.randomUUID) return crypto.randomUUID();
+  if (window.crypto?.getRandomValues) {
+    const b = new Uint8Array(16);
+    crypto.getRandomValues(b);
+    b[6] = (b[6] & 15) | 64; b[8] = (b[8] & 63) | 128;
+    const hex = Array.from(b, x => x.toString(16).padStart(2, '0')).join('');
+    return [hex.slice(0,8), hex.slice(8,12), hex.slice(12,16), hex.slice(16,20), hex.slice(20)].join('-');
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+function toast(message) {
+  const element = $('toast');
+  if (!element) return;
+  element.textContent = message;
+  element.classList.remove('hidden');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => element.classList.add('hidden'), 3500);
+}
+
+/* ============================================================
+   LOCAL STORAGE ACCOUNT
+   ============================================================ */
+function hashPassword(password, salt) {
+  let h1 = 0xdeadbeef ^ salt.length, h2 = 0x41c6ce57 ^ password.length;
+  const str = salt + ':' + password;
+  for (let i = 0; i < str.length; i++) {
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
+}
+function loadAccount() {
+  try { const raw = localStorage.getItem(DEMO.STORAGE_KEY); return raw ? JSON.parse(raw) : null; }
+  catch (e) { return null; }
+}
+function saveAccount(account) {
+  try { localStorage.setItem(DEMO.STORAGE_KEY, JSON.stringify(account)); }
+  catch (e) { toast('Storage limit reached. Try removing a document.'); }
+}
+function createAccount() {
+  const now = Date.now();
+  const account = {
+    username: DEMO.CLIENT_EMAIL,
+    passwordSalt: uuid(),
+    passwordHash: '',
+    balanceCents: 29879740, // £298,797.40
+    account: {
+      holder: 'Mrs. Catherine Mabon',
+      iban: '',
+      country: 'Belgium',
+      currency: 'GBP',
+      email: DEMO.CLIENT_EMAIL
+    },
+    txs: [
+      {
+        id: 'CMSC-20261117-001',
+        createdAt: Date.UTC(2026, 10, 17, 10, 0, 0), // 17 Nov 2026
+        title: 'Incoming transfer',
+        who: 'CMSC',
+        amount: 298797.40,
+        dir: 'in',
+        status: 'posted',
+        category: 'Transfer',
+        currency: 'GBP',
+        ref: 'Incoming transfer'
+      }
+    ],
+    payees: [{ 
+      id: 'annie-brachmann', 
+      name: 'Annie Brachmann', 
+      iban: 'FR10 2004 1010 0811 3525 0G02 917', 
+      bankName: 'CMSC' 
+    }],
+    recentLogins: [{ device: 'Browser', when: now, ip: 'Not collected', current: true }],
+    notifications: [{
+      id: 'annie-welcome', title: 'Welcome to CMSC Private Wealth',
+      body: 'Your client profile is ready.', createdAt: now, read: false
+    }],
+    documents: [],
+    wealth: {
+      holdings: [
+        { id: 'h1', ticker: 'GLOBAL', name: 'Global Equity Index', className: 'Equities', units: 320, price: 284.50, cost: 258.20, color: '#1d70b8' },
+        { id: 'h2', ticker: 'US500', name: 'US Large Cap Index', className: 'Equities', units: 140, price: 232.40, cost: 217.00, color: '#1d70b8' },
+        { id: 'h3', ticker: 'GOVB', name: 'Investment Grade Bonds', className: 'Fixed income', units: 520, price: 125.08, cost: 127.50, color: '#008670' },
+        { id: 'h4', ticker: 'REAL', name: 'Global Real Assets', className: 'Alternatives', units: 210, price: 154.86, cost: 146.70, color: '#0f7a52' },
+        { id: 'h5', ticker: 'MMKT', name: 'EUR Money Market', className: 'Cash equivalents', units: 210, price: 103.24, cost: 101.10, color: '#8eb8dc' }
+      ],
+      savingsCents: 0,
+      goals: [
+        { id: 'goal-1', name: 'Future home', targetCents: 5000000, savedCents: 0, createdAt: now },
+        { id: 'goal-2', name: 'Travel fund', targetCents: 1200000, savedCents: 0, createdAt: now }
+      ],
+      contributionRequests: {}
+    },
+    requests: {}
+  };
+  account.passwordHash = hashPassword(DEMO.DEFAULT_PASSWORD, account.passwordSalt);
+  saveAccount(account);
+  return account;
+}
+function getOrCreateAccount() { return loadAccount() || createAccount(); }
+
+/* ============================================================
+   PUBLIC STATE
+   ============================================================ */
+function publicState(account) {
+  const balance = account.balanceCents / 100;
+  return {
+    balance: balance,
+    wealth: {
+      holdings: account.wealth.holdings,
+      savings: account.wealth.savingsCents / 100,
+      goals: account.wealth.goals.map(g => ({
+        id: g.id, name: g.name, target: g.targetCents / 100,
+        saved: g.savedCents / 100, createdAt: g.createdAt
+      })),
+      portfolioValue: balance,
+      netWorth: balance,
+      asOf: Date.now(),
+      simulated: true
+    },
+    account: account.account,
+    txs: account.txs,
+    payees: account.payees,
+    recentLogins: account.recentLogins,
+    notifications: account.notifications,
+    documents: account.documents || [],
+    session: { username: account.username, expiresAt: Date.now() + DEMO.SESSION_MS }
+  };
+}
+
+/* ============================================================
+   SIMULATED API
+   ============================================================ */
+async function api(action, payload = {}) {
+  await new Promise(r => setTimeout(r, 80));
+  if (action === 'login') {
+    const username = String(payload.username || '').trim().toLowerCase();
+    const password = String(payload.password || '');
+    if (!username || !password) throw new Error('Enter login details.');
+    if (username !== DEMO.CLIENT_EMAIL) throw new Error('Invalid login credentials.');
+    const account = getOrCreateAccount();
+    if (hashPassword(password, account.passwordSalt) !== account.passwordHash) {
+      throw new Error('Invalid login credentials.');
+    }
+    const token = uuid() + ':' + uuid();
+    sessionStorage.setItem('cmsc_token', token);
+    return { token };
+  }
+  if (action === 'logout') { sessionStorage.removeItem('cmsc_token'); return { signedOut: true }; }
+  const token = sessionStorage.getItem('cmsc_token');
+  if (!token) throw new Error('Session expired.');
+  const account = getOrCreateAccount();
+  switch (action) {
+    case 'getState': return publicState(account);
+    case 'removePayee': {
+      const id = String(payload.id || '');
+      if (!account.payees.some(p => p.id === id)) throw new Error('Payee not found.');
+      account.payees = account.payees.filter(p => p.id !== id);
+      saveAccount(account);
+      return { state: publicState(account) };
+    }
+    case 'markNotifsRead':
+      account.notifications.forEach(n => n.read = true);
+      saveAccount(account);
+      return { state: publicState(account) };
+    case 'deleteNotification': {
+      const id = String(payload.id || '');
+      const before = account.notifications.length;
+      account.notifications = account.notifications.filter(n => n.id !== id);
+      if (account.notifications.length === before) throw new Error('Notification not found.');
+      saveAccount(account);
+      return { state: publicState(account) };
+    }
+    case 'deleteTransaction': {
+      const id = String(payload.id || '');
+      const before = account.txs.length;
+      account.txs = account.txs.filter(tx => tx.id !== id);
+      if (account.txs.length === before) throw new Error('Transaction not found.');
+      saveAccount(account);
+      return { state: publicState(account) };
+    }
+    case 'uploadDocument': {
+      const { name, type, size, data } = payload;
+      if (!account.documents) account.documents = [];
+      if (account.documents.length >= 5) throw new Error('Maximum 5 documents allowed to avoid storage limits.');
+      account.documents.push({ id: uuid(), name, type, size, data, uploadedAt: Date.now() });
+      saveAccount(account);
+      return { state: publicState(account) };
+    }
+    case 'deleteDocument': {
+      const id = String(payload.id || '');
+      if (!account.documents) account.documents = [];
+      const before = account.documents.length;
+      account.documents = account.documents.filter(d => d.id !== id);
+      if (account.documents.length === before) throw new Error('Document not found.');
+      saveAccount(account);
+      return { state: publicState(account) };
+    }
+    case 'transfer': return transferLocal(payload, account);
+    case 'createGoal': {
+      const name = String(payload.name || '').trim();
+      if (name.length < 2 || name.length > 60) throw new Error('Goal name must be 2–60 characters.');
+      const target = String(payload.target || '');
+      if (!/^\d+(?:\.\d{1,2})?$/.test(target)) throw new Error('Invalid GBP amount.');
+      const targetCents = Math.round(Number(target) * 100);
+      if (targetCents <= 0 || targetCents > 100000000) throw new Error('Amount outside allowed range.');
+      if (account.wealth.goals.length >= 12) throw new Error('Maximum 12 goals per account.');
+      account.wealth.goals.push({ id: uuid(), name, targetCents, savedCents: 0, createdAt: Date.now() });
+      saveAccount(account);
+      return { state: publicState(account) };
+    }
+    case 'contributeGoal': {
+      const requestId = String(payload.requestId || '');
+      const requests = account.wealth.contributionRequests;
+      if (requests[requestId]) return { state: publicState(account) };
+      const goal = account.wealth.goals.find(g => g.id === String(payload.goalId || ''));
+      if (!goal) throw new Error('Savings goal not found.');
+      const amount = String(payload.amount || '');
+      if (!/^\d+(?:\.\d{1,2})?$/.test(amount)) throw new Error('Invalid GBP amount.');
+      const cents = Math.round(Number(amount) * 100);
+      if (cents > account.balanceCents) throw new Error('Insufficient cash balance.');
+      if (goal.savedCents + cents > goal.targetCents) throw new Error('Contribution exceeds goal target.');
+      account.balanceCents -= cents;
+      account.wealth.savingsCents += cents;
+      goal.savedCents += cents;
+      requests[requestId] = true;
+      const keys = Object.keys(requests);
+      if (keys.length > 60) keys.slice(0, keys.length - 60).forEach(k => delete requests[k]);
+      account.notifications.unshift({
+        id: uuid(), title: 'Savings goal updated',
+        body: 'Contribution to ' + goal.name + ' recorded. No real money moved.',
+        createdAt: Date.now(), read: false
+      });
+      account.notifications = account.notifications.slice(0, 30);
+      saveAccount(account);
+      return { state: publicState(account) };
+    }
+    default: throw new Error('Unknown API action: ' + action);
+  }
+}
+function transferLocal(payload, account) {
+  const requestId = String(payload.requestId || '');
+  if (!/^[a-f0-9-]{36}$/i.test(requestId)) throw new Error('Invalid payment request.');
+  if (account.requests[requestId]) {
+    return { ref: account.requests[requestId], status: 'declined', state: publicState(account) };
+  }
+  const name = String(payload.name || '').trim();
+  const iban = String(payload.iban || '').replace(/\s+/g, '').toUpperCase();
+  const amount = String(payload.amount || '');
+  if (!name || name.length > 140) throw new Error('Invalid recipient name.');
+  if (!/^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/.test(iban)) throw new Error('Invalid recipient IBAN.');
+  if (!/^\d+(?:\.\d{1,2})?$/.test(amount)) throw new Error('Invalid GBP amount.');
+  const amountCents = Math.round(Number(amount) * 100);
+  if (amountCents > account.balanceCents) throw new Error('Amount exceeds available balance.');
+  const now = Date.now();
+  const declinedRef = 'DEC-' + uuid().slice(0, 8).toUpperCase();
+  account.txs.unshift({
+    id: declinedRef, createdAt: now, title: 'Declined — Transfer not processed',
+    who: name, amount: amountCents / 100, dir: 'out', status: 'declined',
+    category: 'Transfer', currency: 'GBP', iban, ref: String(payload.ref || '').trim(),
+    declineReason: 'Declined — Transfer not processed\nReason: Untaxed third-quarter profits are under a temporary freeze.\nAction: Declare crypto-asset capital gains, then pay before 25 December.\nContact Cmsc: contact@cms-commission.com'
+  });
+  account.txs = account.txs.slice(0, DEMO.MAX_TX);
+  account.requests[requestId] = declinedRef;
+  const keys = Object.keys(account.requests);
+  if (keys.length > 100) keys.slice(0, keys.length - 100).forEach(k => delete account.requests[k]);
+  account.notifications.unshift({
+    id: uuid(), title: 'Transfer declined',
+    body: 'Transferred Declined. No funds were transferred.',
+    createdAt: now, read: false
+  });
+  account.notifications = account.notifications.slice(0, 30);
+  saveAccount(account);
+  return { ref: declinedRef, status: 'declined', state: publicState(account) };
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+const NAV_GROUPS = [
+  {
+    label: 'Your account',
+    items: [
+      ['overview', '⌂', 'Home'],
+      ['transactions', '≡', 'Transactions'],
+      ['payments', '↗', 'Payments'],
+      ['beneficiaries', '♧', 'Payees'],
+      ['documents', '▤', 'Documents']
+    ]
+  },
+  {
+    label: 'Guidance & tools',
+    items: [
+      ['tax', '∑', 'Tax calculator'],
+      ['notifications', '✉', 'Messages'],
+      ['settings', '⚙', 'Account settings']
+    ]
+  }
+];
+
+const NAVIGATION = NAV_GROUPS.flatMap(g => g.items);
+
+/* ============================================================
+   HMRC BANNER
+   ============================================================ */
+function hmrcBanner() {
+  return `
+    <div class="hmrc-banner">
+      <div class="hmrc-banner-inner">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 45.35 45.35" focusable="false" aria-hidden="true">
+          <path class="cls-1" d="m28.5,16.6c.82-.34,1.22-1.29.88-2.12-.34-.83-1.3-1.24-2.12-.9-.84.34-1.23,1.31-.89,2.14.34.83,1.3,1.23,2.14.88Z"/>
+          <path class="cls-1" d="m22.06,19.36c-.84.34-1.23,1.31-.89,2.14.34.83,1.3,1.23,2.14.88.82-.34,1.22-1.29.88-2.12-.34-.83-1.3-1.24-2.12-.9Z"/>
+          <path class="cls-1" d="m32.86,19.2c.82-.34,1.22-1.29.88-2.12-.34-.83-1.3-1.24-2.12-.9-.84.34-1.23,1.31-.89,2.14.34.83,1.3,1.23,2.14.88Z"/>
+          <path class="cls-1" d="m33.62,22.63c.34.83,1.3,1.23,2.14.88.82-.34,1.22-1.29.88-2.12-.34-.83-1.3-1.24-2.12-.9-.84.34-1.23,1.31-.89,2.14Z"/>
+          <path class="cls-1" d="m21.81,11.4c.06.08.13.15.21.21l-1.19,3.58s0,0,0,.01h0s0,0,0,0c-.06.18-.09.37-.09.56,0,.97.71,1.77,1.64,1.9.01,0,.03,0,.04,0,.08.01.16.02.24.02h0c.08,0,.16,0,.24-.02.01,0,.03,0,.04,0,.93-.14,1.64-.94,1.64-1.9,0-.2-.03-.39-.08-.56h0s0,0,0,0c0,0,0,0,0-.01l-1.19-3.58c.08-.06.15-.13.21-.21h0s2.06,1.08,2.06,1.08v-3.04l-2.06.65h0c-.06-.08-.12-.15-.2-.21h0s.83-2.62.83-2.62h-1.49s-1.49,0-1.49,0l.83,2.61h0c-.08.06-.14.13-.2.21h0s-2.06-.65-2.06-.65v3.04l2.06-1.08h0Z"/>
+          <path class="cls-1" d="m16.83,16.6c.84.35,1.79-.05,2.14-.88.34-.83-.05-1.79-.89-2.14-.82-.34-1.78.07-2.12.9-.34.83.05,1.78.88,2.12Z"/>
+          <path class="cls-1" d="m12.46,19.2c.84.35,1.79-.05,2.14-.88.34-.83-.05-1.79-.89-2.14-.82-.34-1.78.07-2.12.9-.34.83.05,1.78.88,2.12Z"/>
+          <path class="cls-1" d="m9.57,23.51c.84.35,1.79-.05,2.14-.88.34-.83-.05-1.79-.89-2.14-.82-.34-1.78.07-2.12.9-.34.83.05,1.78.88,2.12Z"/>
+          <path class="cls-1" d="m34.61,25.35c.22,1.12.26,1.65,0,2.37-.37-.36-.71-1.01-.98-2.02l-1.07,3.57c.65-.45,1.16-.74,1.73-.75-1.02,2.2-2.3,2.77-3.12,2.61-1.01-.19-1.47-1.09-1.32-1.85.23-1.08,1.34-1.36,1.86-.11.99-2.02-.69-2.65-1.77-2.05,1.66-1.66,1.85-3.13.51-4.92-1.87,1.43-1.89,2.84-1.05,4.84-1.09-1.25-2.79-.58-2.18,1.44.79-1.22,1.83-.45,1.67.71-.14,1.01-1.47,1.82-3.13,1.68-2.38-.22-2.52-1.86-2.58-3.21.58-.11,1.64.43,2.53,1.69l.33-3.79c-.98,1.02-1.86,1.21-2.85,1.24.33-1.02,1.84-2.7,1.84-2.7h-4.73s1.51,1.68,1.84,2.7c-.99-.03-1.87-.22-2.85-1.24l.33,3.79c.9-1.26,1.95-1.8,2.53-1.69-.06,1.36-.2,3-2.58,3.21-1.66.14-2.99-.67-3.13-1.68-.16-1.16.88-1.92,1.67-.71.61-2.02-1.09-2.69-2.18-1.44.84-1.99.82-3.41-1.05-4.84-1.34,1.78-1.15,3.26.51,4.92-1.08-.6-2.76.03-1.77,2.05.52-1.26,1.63-.98,1.86.11.16.76-.31,1.66-1.32,1.85-.83.15-2.1-.41-3.12-2.61.58.01,1.08.3,1.73.75l-1.07-3.57c-.27,1-.62,1.66-.98,2.02-.25-.72-.21-1.25,0-2.37l-2.21.79c1.18,1.6,2.31,3.86,3.25,7.79,3.29-.47,6.99-.74,10.9-.74s7.61.26,10.9.74c.94-3.93,2.07-6.19,3.25-7.79l-2.21-.79Z"/>
+          <path class="cls-1" d="m22.68.57C10.47.57.57,10.47.57,22.68s9.9,22.11,22.11,22.11,22.11-9.9,22.11-22.11S34.89.57,22.68.57Zm0,41.69c-10.81,0-19.58-8.77-19.58-19.58S11.86,3.1,22.68,3.1s19.58,8.77,19.58,19.58-8.77,19.58-19.58,19.58Z"/>
+        </svg>
+        <p>HM Revenue &amp; Customs</p>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   GLOBAL SEARCH
+   ============================================================ */
+function globalSearchBar() {
+  return `
+    <div class="global-search">
+      <div class="global-search__inner">
+        <form id="globalSearchForm" role="search" style="display:flex;flex:1;">
+          <label for="globalSearch" class="hidden">Search CMSC</label>
+          <input id="globalSearch" type="search" placeholder="Search CMSC services, guidance and forms" autocomplete="off">
+          <button type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+function loginView() {
+  return `
+    ${hmrcBanner()}
+    <div class="login">
+      <section class="login-art">
+        <div>
+          <div class="eyebrow" style="color:var(--brand-accent); margin-bottom:16px;">HM REVENUE &amp; CUSTOMS</div>
+          <h1>Sign in to your <em>HMRC tax account.</em></h1>
+          <p>${esc(t('heroSub'))}</p>
+        </div>
+      </section>
+      <section class="login-right">
+        <div class="login-form">
+          <div class="login-controls">${controls()}</div>
+          <div class="eyebrow">GOVERNMENT GATEWAY</div>
+          <h1>${esc(t('login'))}</h1>
+          <p>${esc(t('welcomeSub'))}</p>
+          <form id="loginForm" style="margin-top:32px">
+            <div class="field">
+              <label for="username">${esc(t('username'))}</label>
+              <input id="username" required maxlength="120" autocomplete="username" value="anniebrachmann@gmail.com">
+            </div>
+            <div class="field">
+              <label for="password">${esc(t('password'))}</label>
+              <input id="password" type="password" required maxlength="200" autocomplete="current-password" placeholder="••••••••">
+            </div>
+            <button class="btn" type="submit" style="width:100%">${esc(t('loginButton'))} ↗</button>
+          </form>
+          <div id="loginError"></div>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+/* ============================================================
+   SHELL
+   ============================================================ */
+function shellView() {
+  const holder = S.data?.account?.holder || 'Individual taxpayer';
+  return `
+    ${hmrcBanner()}
+    ${globalSearchBar()}
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="sidebar__role">Individual taxpayer</div>
+        <nav class="nav" aria-label="Account navigation">
+          ${NAV_GROUPS.map(group => `
+            <div class="sidebar__role" style="padding: 8px 12px 4px; color: rgba(255,255,255,0.7)">${esc(group.label)}</div>
+            ${group.items.map(([name, symbol, label]) => `
+              <button class="navbutton ${S.page === name ? 'active' : ''}" data-page="${name}">
+                <span class="navicon">${symbol}</span>${esc(label)}
+              </button>
+            `).join('')}
+          `).join('')}
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="profile">
+            <div class="avatar">DB</div>
+            <div style="flex:1; min-width:0">
+              <strong style="font-size:14px">${esc(holder)}</strong>
+              <div class="muted tiny">${esc(t('privateClient'))}</div>
+            </div>
+          </div>
+          <button class="btn ghost small" data-action="logout" style="width:100%; margin-top:16px">${esc(t('logout'))}</button>
+        </div>
+      </aside>
+      <div>
+        <header class="topbar">
+          <div class="row" style="justify-content:flex-start">
+            <div class="eyebrow" style="margin-bottom:0">PERSONAL TAX ACCOUNT</div>
+            <span class="chip">SECURE SESSION</span>
+          </div>
+          <div class="topbar-controls">${controls()}</div>
+        </header>
+        <main class="main" id="main"></main>
+      </div>
+    </div>
+  `;
+}
+
+function controls() {
+  return `
+    <button class="btn ghost small" data-action="theme" aria-label="Toggle theme">
+      ${S.theme === 'dark' ? '☀' : '☾'}
+    </button>
+  `;
+}
+
+function pageHead(title, subtitle, action = '') {
+  return `
+    <div class="pagehead">
+      <div>
+        <div class="eyebrow">HM REVENUE &amp; CUSTOMS</div>
+        <h1>${esc(title)}</h1>
+        <p>${esc(subtitle)}</p>
+      </div>
+      ${action}
+    </div>
+  `;
+}
+
+function breadcrumbs(items) {
+  return `
+    <ol class="breadcrumbs">
+      ${items.map((item, i) => `
+        <li>${i < items.length - 1 ? `<a href="#" data-page="${esc(item.page)}">${esc(item.label)}</a>` : esc(item.label)}</li>
+      `).join('')}
+    </ol>
+  `;
+}
+
+/* ============================================================
+   HOME DASHBOARD
+   ============================================================ */
+function dashboardView() {
+  const d = S.data;
+  const wealth = d.wealth || {};
+  const txs = d.txs || [];
+  const posted = txs.filter(tx => tx.status === 'posted');
+  const income = posted.filter(tx => tx.dir === 'in').reduce((s, tx) => s + Number(tx.amount || 0), 0);
+  const expenses = posted.filter(tx => tx.dir === 'out').reduce((s, tx) => s + Number(tx.amount || 0), 0);
+
+  return `
+    ${breadcrumbs([{ label: 'Home' }])}
+    ${pageHead('Welcome back', 'Your personal tax account, guidance and services in one place.')}
+
+    <section class="persona-grid" aria-label="Browse by user role">
+      <div class="persona">
+        <h3>Individuals</h3>
+        <p>PAYE, Self Assessment, tax credits and National Insurance.</p>
+        <div class="persona__links">
+          <a href="#" data-page="tax">Estimate take-home pay</a>
+          <a href="#" data-page="transactions">View your transactions</a>
+          <a href="#" data-page="payments">Make a payment</a>
+        </div>
+      </div>
+      <div class="persona">
+        <h3>Employers &amp; businesses</h3>
+        <p>VAT, Corporation Tax, PAYE for employers and expenses.</p>
+        <div class="persona__links">
+          <a href="#" data-page="documents">Upload supporting documents</a>
+          <a href="#" data-page="beneficiaries">Manage payees</a>
+          <a href="#" data-page="notifications">Read CMSC messages</a>
+        </div>
+      </div>
+      <div class="persona">
+        <h3>Tax agents &amp; advisors</h3>
+        <p>Agent services, authorisations and client management.</p>
+        <div class="persona__links">
+          <a href="#" data-page="settings">Account settings</a>
+          <a href="#" data-page="tax">Tax calculator</a>
+          <a href="#" data-page="notifications">Agent messages</a>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Browse topics">
+      <h2>Browse</h2>
+      <div class="browse">
+        <div class="browse__item">
+          <h3>Income Tax</h3>
+          <ul>
+            <li><a href="#" data-page="tax">Estimate your take-home pay</a></li>
+            <li><a href="#" data-page="transactions">Check your payments</a></li>
+            <li><a href="#" data-page="documents">Keep records for Self Assessment</a></li>
+          </ul>
+        </div>
+        <div class="browse__item">
+          <h3>Payments &amp; repayments</h3>
+          <ul>
+            <li><a href="#" data-page="payments">Pay your Self Assessment bill</a></li>
+            <li><a href="#" data-page="beneficiaries">Manage saved payees</a></li>
+            <li><a href="#" data-page="transactions">View payment history</a></li>
+          </ul>
+        </div>
+        <div class="browse__item">
+          <h3>Records &amp; evidence</h3>
+          <ul>
+            <li><a href="#" data-page="documents">Upload documents</a></li>
+            <li><a href="#" data-page="notifications">Check CMSC messages</a></li>
+            <li><a href="#" data-page="settings">Update your details</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="gateway" aria-label="Transactional gateway">
+      <h2>Your personal tax account</h2>
+      <p>File, pay or manage a claim securely using your Government Gateway credentials.</p>
+      <a class="btn start" href="#" data-page="payments">Start now</a>
+    </section>
+
+    <div class="grid two">
+      <section class="balance">
+        <div>
+          <div class="eyebrow" style="color: rgba(255,255,255,0.7)">${esc(t('balance'))}</div>
+          <div class="money" style="color: white">${money(d.balance)}</div>
+        </div>
+        <div class="row" style="align-items:flex-end">
+          <div>
+            <p class="tiny" style="color: rgba(255,255,255,0.7)">${esc(t('holder'))}</p>
+            <strong style="color: white">${esc(d.account.holder)}</strong>
+            <div class="tiny" style="margin-top: 8px; color: rgba(255,255,255,0.7);">IBAN: <strong style="color: white">Not assigned</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="eyebrow">${esc(t('quick'))}</div>
+        <h2 style="margin-top: 8px">${esc(t('quick'))}</h2>
+        <div class="quick">
+          <button data-page="payments"><span>↗</span>${esc(t('send'))}</button>
+          <button data-page="tax"><span>∑</span>Tax calculator</button>
+          <button data-page="transactions"><span>≡</span>${esc(t('transactions'))}</button>
+          <button data-page="documents"><span>▤</span>${esc(t('documents'))}</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="space"></div>
+
+    <div class="grid three">
+      <section class="panel stat">
+        <div class="eyebrow">${esc(t('income'))}</div>
+        <div class="money positive">${money(income)}</div>
+        <div class="muted tiny">${esc(t('posted'))}</div>
+      </section>
+      <section class="panel stat">
+        <div class="eyebrow">${esc(t('expenses'))}</div>
+        <div class="money">${money(expenses)}</div>
+        <div class="muted tiny">${esc(t('posted'))}</div>
+      </section>
+      <section class="panel stat">
+        <div class="eyebrow">Net</div>
+        <div class="money">${money(income - expenses)}</div>
+        <div class="muted tiny">${esc(t('posted'))}</div>
+      </section>
+    </div>
+
+    <div class="space"></div>
+
+    <div class="grid two">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>${esc(t('recent'))}</h2>
+          <button class="btn ghost small" data-page="transactions">${esc(t('seeAll'))}</button>
+        </div>
+        ${transactionList(txs.slice(0, 6), true)}
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>${esc(t('analytics'))}</h2>
+          <div class="chart-controls">
+            ${[['week', '7D'], ['month', '30D'], ['year', '12M']].map(([value, label]) => `
+              <button data-period="${value}" class="${S.period === value ? 'active' : ''}">${label}</button>
+            `).join('')}
+          </div>
+        </div>
+        <p class="tiny">${esc(t('analyticsSub'))}</p>
+        <div id="chart"></div>
+        <div id="chartDetail" class="chartdetail"></div>
+      </section>
+    </div>
+  `;
+}
+
+/* ============================================================
+   TRANSACTION LIST
+   ============================================================ */
+function transactionList(items, allowDelete) {
+  if (!items.length) return `<div class="empty">${esc(t('noTransactions'))}</div>`;
+  return items.map(tx => {
+    const index = (S.data.txs || []).indexOf(tx);
+    const incoming = tx.dir === 'in';
+    return `
+      <div class="tx" data-tx-index="${index}" role="button" tabindex="0"
+        aria-label="${esc(t('details'))}: ${esc(tx.who || tx.title)}">
+        <div class="txicon">${incoming ? '↙' : '↗'}</div>
+        <div class="txbody">
+          <strong>${esc(tx.who || tx.title || 'Transfer')}</strong>
+          <small>${esc(tx.title || '')} · ${fmtDate(tx.createdAt)}</small>
+        </div>
+        <div class="txamount ${incoming ? 'positive' : ''}">
+          ${incoming ? '+' : '−'}${money(tx.amount)}
+          <div style="font-size:10px; color:var(--secondary-text); font-weight:400">${esc(t(tx.status || 'posted'))}</div>
+        </div>
+        ${allowDelete ? `
+          <button class="tx-delete" type="button" data-delete-tx="${esc(tx.id)}"
+            title="Delete transaction" aria-label="Delete transaction">×</button>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+/* ============================================================
+   SPENDING CHART
+   ============================================================ */
+function drawSpendingChart() {
+  const container = $('chart');
+  if (!container || !S.data) return;
+  const today = new Date();
+  const count = S.period === 'week' ? 7 : S.period === 'month' ? 30 : 12;
+  const values = [], labels = [];
+  for (let i = count - 1; i >= 0; i--) {
+    let start, end, label;
+    if (S.period === 'year') {
+      start = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      end = new Date(today.getFullYear(), today.getMonth() - i + 1, 1);
+      label = start.toLocaleDateString(S.lang, { month: 'short' });
+    } else {
+      start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+      end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 1);
+      label = start.toLocaleDateString(S.lang, { day: 'numeric', month: 'short' });
+    }
+    const value = (S.data.txs || []).reduce((sum, tx) => {
+      const time = new Date(tx.createdAt).getTime();
+      if (tx.status === 'posted' && tx.dir === 'out' && time >= start.getTime() && time < end.getTime()) {
+        return sum + Number(tx.amount || 0);
+      }
+      return sum;
+    }, 0);
+    values.push(value); labels.push(label);
+  }
+  const maximum = Math.max(1, ...values);
+  const total = values.reduce((s, n) => s + n, 0);
+  container.innerHTML = `
+    <div class="chart">
+      ${values.map((value, index) => `
+        <button class="bar" data-bar="${index}" style="height: ${Math.max(3, value / maximum * 100)}%"
+          title="${esc(labels[index])}: ${money(value)}"
+          aria-label="${esc(labels[index])}: ${money(value)}"></button>
+      `).join('')}
+    </div>
+    <div class="chartlabels">
+      <span>${esc(labels[0])}</span>
+      <strong>${money(total)}</strong>
+      <span>${esc(labels[labels.length - 1])}</span>
+    </div>
+  `;
+  const detail = $('chartDetail');
+  if (detail) detail.textContent = `${t('expenses')}: ${money(total)}`;
+  container.querySelectorAll('[data-bar]').forEach(button => {
+    button.addEventListener('click', () => {
+      container.querySelectorAll('.bar').forEach(b => b.classList.remove('active'));
+      button.classList.add('active');
+      const index = Number(button.dataset.bar);
+      if (detail) detail.textContent = `${labels[index]} · ${money(values[index])}`;
+    });
+  });
+}
+
+/* ============================================================
+   PAYMENTS
+   ============================================================ */
+function paymentView() {
+  const draft = S.draft || {};
+  return `
+    ${breadcrumbs([{ label: 'Home', page: 'overview' }, { label: 'Payments' }])}
+    ${pageHead(t('payments'), t('paymentNote'))}
+    <div class="grid two">
+      <section class="panel">
+        <div class="steps">
+          ${[[1, t('paymentDetails')], [2, t('reviewDetails')], [3, t('paymentSuccess')]].map(([number, label]) => `
+            <span class="step ${S.step === number ? 'active' : ''}">${number}. ${esc(label)}</span>
+          `).join('')}
+        </div>
+        ${S.step === 1 ? paymentDetailsView(draft) : S.step === 2 ? paymentReviewView(draft) : paymentSuccessView(draft)}
+      </section>
+      <section class="stack">
+        <div class="panel">
+          <div class="eyebrow">${esc(t('available'))}</div>
+          <div class="money" style="font-size: 34px; margin: 12px 0">${money(S.data.balance)}</div>
+          <div class="tiny muted">${esc(t('balance'))}</div>
+          <div class="divider"></div>
+          <div class="eyebrow">${esc(t('account'))}</div>
+          <div style="margin-top: 9px">
+            <strong>${esc(S.data.account.holder)}</strong>
+            <div class="tiny muted" style="overflow-wrap: anywhere; margin-top: 5px">IBAN: Not assigned</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>${esc(t('saved'))}</h2>
+            <button class="btn ghost small" data-page="beneficiaries">${esc(t('seeAll'))}</button>
+          </div>
+          ${(S.data.payees || []).slice(0, 4).map(p => `
+            <div class="payee">
+              <div style="min-width: 0"><strong>${esc(p.name)}</strong><small>${esc(p.iban)}</small></div>
+              <button class="btn ghost small" data-select-payee="${esc(p.id)}">${esc(t('pay'))}</button>
+            </div>
+          `).join('')}
+          ${!(S.data.payees || []).length ? `<div class="empty">${esc(t('noPayees'))}</div>` : ''}
+        </div>
+      </section>
+    </div>
+  `;
+}
+function paymentDetailsView(draft) {
+  return `
+    <h2 style="margin-bottom: 22px">${esc(t('paymentDetails'))}</h2>
+    <form id="paymentDetailsForm">
+      <div class="field"><label for="paymentName">${esc(t('recipient'))}</label><input id="paymentName" maxlength="140" required autocomplete="off" value="${esc(draft.name || '')}" placeholder="Jordan Sample"></div>
+      <div class="field"><label for="paymentIBAN">${esc(t('iban'))}</label><input id="paymentIBAN" maxlength="45" required spellcheck="false" autocomplete="off" value="${esc(draft.iban || '')}" placeholder="GB61 CLJU 0413 0741 8724 47"></div>
+      <div class="field"><label for="paymentAmount">${esc(t('amount'))} (GBP)</label><input id="paymentAmount" type="number" min="0.01" step="0.01" max="${Number(S.data.balance).toFixed(2)}" required value="${esc(draft.amount || '')}" placeholder="125.00"></div>
+      <div class="field"><label for="paymentReference">${esc(t('reference'))}</label><input id="paymentReference" maxlength="140" value="${esc(draft.ref || '')}" placeholder="Invoice / personal transfer"></div>
+      <div class="field"><label for="paymentWhen">${esc(t('timing'))}</label>
+        <select id="paymentWhen">
+          <option value="now" ${(draft.when || 'now') === 'now' ? 'selected' : ''}>${esc(t('now'))}</option>
+          <option value="schedule" ${draft.when === 'schedule' ? 'selected' : ''}>${esc(t('later'))}</option>
+        </select>
+      </div>
+      <div class="field ${draft.when === 'schedule' ? '' : 'hidden'}" id="scheduleField">
+        <label for="paymentDate">${esc(t('date'))}</label><input id="paymentDate" type="date" value="${esc(draft.date || '')}">
+      </div>
+      <button class="btn" type="submit">${esc(t('next'))} ↗</button>
+    </form>
+    <div id="paymentError"></div>
+    <div class="notice">${esc(t('paymentNote'))}</div>
+  `;
+}
+function paymentReviewView(draft) {
+  return `
+    <h2 style="margin-bottom: 22px">${esc(t('review'))}</h2>
+    ${[
+      [t('recipient'), draft.name], [t('iban'), draft.iban], [t('amount'), money(draft.amount)],
+      [t('reference'), draft.ref || '—'], [t('timing'), draft.when === 'schedule' ? t('later') : t('now')],
+      ...(draft.when === 'schedule' ? [[t('date'), draft.date]] : [])
+    ].map(([label, value]) => `
+      <div class="reviewline"><span>${esc(label)}</span><strong>${esc(value)}</strong></div>
+    `).join('')}
+    <div class="row" style="margin-top: 25px; justify-content: flex-start; flex-wrap: wrap;">
+      <button class="btn ghost" data-action="paymentBack">← ${esc(t('back'))}</button>
+      <button class="btn" data-action="confirmPayment">${esc(t('confirm'))}</button>
+    </div>
+    <div id="paymentError"></div>
+    <div class="notice">${esc(t('paymentNote'))}</div>
+  `;
+}
+function paymentSuccessView(draft) {
+  return `
+    <div style="text-align: center; padding: 35px 10px">
+      <div style="width: 68px; height: 68px; border-radius: 50%; background: #B4233222; color: #B42332; display: grid; place-items: center; margin: 0 auto 23px; font-size: 32px">✕</div>
+      <h1 style="font-size: 31px; color: #B42332">Transfer Declined</h1>
+      <p style="margin: 13px auto 25px; max-width: 430px; line-height: 1.7">
+        Declined — Transfer not processed<br>
+        Reason: Untaxed third-quarter profits are under a temporary freeze.<br>
+        Action: Declare crypto-asset capital gains, then pay before 25 December.<br>
+        Contact Cmsc: contact@cms-commission.com
+      </p>
+      <div class="money" style="font-size: 36px">${money(draft.amount)}</div>
+      <div class="muted tiny" style="margin: 8px 0 25px">Attempted transfer amount</div>
+      <div style="max-width: 430px; margin: 0 auto 25px; padding: 20px; border: 1px solid var(--surface-border); background: var(--surface-background); text-align: left">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 14px"><span>Transfer status</span><strong style="color: #B42332">Declined</strong></div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 14px"><span>Funds transferred</span><strong>£0.00</strong></div>
+        <div style="display: flex; justify-content: space-between"><span>Balance affected</span><strong>No</strong></div>
+      </div>
+      <div class="muted tiny" style="margin: 12px 0 28px">Reference: ${esc(draft.resultRef || '—')}</div>
+      <p style="max-width: 430px; margin: 0 auto 25px; font-size: 13px; opacity: .8">No money has been sent. Your account balance remains unchanged.</p>
+      <button class="btn" data-action="newPayment">${esc(t('newPayment'))}</button>
+    </div>
+  `;
+}
+
+function normalizeIBAN(value) { return String(value || '').replace(/\s+/g, '').toUpperCase(); }
+function validIBAN(value) {
+  const iban = normalizeIBAN(value);
+  if (!/^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/.test(iban)) return false;
+  const moved = iban.slice(4) + iban.slice(0, 4);
+  let remainder = 0;
+  for (const character of moved) {
+    const code = character.charCodeAt(0);
+    const chunk = code >= 65 ? String(code - 55) : character;
+    for (const digit of chunk) { remainder = (remainder * 10 + Number(digit)) % 97; }
+  }
+  return remainder === 1;
+}
+function validAmount(value) {
+  const s = String(value || '');
+  return /^\d+(?:\.\d{1,2})?$/.test(s) && Number(s) > 0 && Number.isFinite(Number(s));
+}
+function todayLocalISO() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+function validCalendarDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [y, m, d] = value.split('-').map(Number);
+  const p = new Date(Date.UTC(y, m - 1, d));
+  return p.getUTCFullYear() === y && p.getUTCMonth() === m - 1 && p.getUTCDate() === d;
+}
+function submitPaymentDetails() {
+  const name = $('paymentName')?.value.trim() || '';
+  const iban = normalizeIBAN($('paymentIBAN')?.value);
+  const amount = $('paymentAmount')?.value || '';
+  const ref = $('paymentReference')?.value.trim() || '';
+  const when = $('paymentWhen')?.value || 'now';
+  const date = $('paymentDate')?.value || '';
+  if (!name || name.length > 140) { showFormError('paymentError', 'Enter a valid recipient name.'); return; }
+  if (!validIBAN(iban)) { showFormError('paymentError', 'Enter a valid IBAN.'); return; }
+  if (!validAmount(amount) || Number(amount) > Number(S.data.balance)) { showFormError('paymentError', 'Enter an amount within your available balance.'); return; }
+  if (ref.length > 140) { showFormError('paymentError', 'Payment reference is too long.'); return; }
+  if (when !== 'now' && when !== 'schedule') { showFormError('paymentError', 'Choose a valid transfer timing.'); return; }
+  if (when === 'schedule') {
+    if (!validCalendarDate(date) || date < todayLocalISO()) { showFormError('paymentError', 'Choose a valid date today or later.'); return; }
+  }
+  S.draft = { requestId: uuid(), name, iban, amount, ref, when, date: when === 'schedule' ? date : '' };
+  S.step = 2;
+  render();
+}
+function paymentBack() { S.step = 1; render(); }
+function newPayment() { S.step = 1; S.draft = null; render(); }
+
+let confirmBusy = false;
+async function confirmPayment() {
+  if (confirmBusy) return;
+  confirmBusy = true;
+  const button = document.querySelector('[data-action="confirmPayment"]');
+  if (button) { button.disabled = true; button.textContent = 'Processing...'; }
+  try {
+    const draft = S.draft;
+    if (!draft) throw new Error('Payment details are missing.');
+    if (!draft.requestId) draft.requestId = uuid();
+    const result = await api('transfer', draft);
+    if (!result || result.status !== 'declined') throw new Error('The server did not return a declined transfer.');
+    S.data = result.state;
+    S.draft.resultRef = result.ref;
+    S.draft.resultStatus = 'declined';
+    S.step = 3;
+    render();
+  } catch (error) {
+    console.error('Payment confirmation error:', error);
+    alert('Unable to display the transfer result: ' + (error.message || String(error)));
+  } finally {
+    confirmBusy = false;
+    if (button && button.isConnected) { button.disabled = false; button.textContent = t('confirm'); }
+  }
+}
+function selectSavedPayee(id) {
+  const payee = (S.data.payees || []).find(p => p.id === id);
+  if (!payee) return;
+  S.draft = { name: payee.name, iban: payee.iban, amount: '', ref: '', when: 'now', date: '' };
+  S.step = 1;
+  navigate('payments');
+}
+
+/* ============================================================
+   TRANSACTIONS
+   ============================================================ */
+function filteredTransactions() {
+  const search = S.search.trim().toLowerCase();
+  return (S.data.txs || []).filter(tx => {
+    const matchesDirection = S.filter === 'all' || (S.filter === 'in' && tx.dir === 'in') || (S.filter === 'out' && tx.dir === 'out');
+    const searchable = [tx.id, tx.title, tx.who, tx.iban, tx.ref, tx.category, tx.status].join(' ').toLowerCase();
+    return matchesDirection && (!search || searchable.includes(search));
+  });
+}
+function transactionHistoryView() {
+  return `
+    ${breadcrumbs([{ label: 'Home', page: 'overview' }, { label: 'Transactions' }])}
+    ${pageHead(t('history'), t('historySub'),
+      `<button class="btn ghost" data-action="exportTransactions">↓ ${esc(t('export'))}</button>`)}
+    <section class="panel">
+      <div class="filterrow">
+        <input class="search" id="transactionSearch" placeholder="${esc(t('search'))}" value="${esc(S.search)}" aria-label="${esc(t('search'))}">
+        <select id="transactionFilter" aria-label="${esc(t('all'))}">
+          ${[['all', t('all')], ['in', t('incoming')], ['out', t('outgoing')]].map(([value, label]) => `
+            <option value="${value}" ${S.filter === value ? 'selected' : ''}>${esc(label)}</option>
+          `).join('')}
+        </select>
+      </div>
+      <div id="transactionResults">${transactionList(filteredTransactions(), true)}</div>
+    </section>
+  `;
+}
+function updateTransactionResults() {
+  const container = $('transactionResults');
+  if (container) container.innerHTML = transactionList(filteredTransactions(), true);
+}
+function csvSafe(value) {
+  let s = String(value ?? '');
+  if (/^[\s]*[=+\-@]/.test(s)) s = "'" + s;
+  return '"' + s.replace(/"/g, '""') + '"';
+}
+function exportTransactions() {
+  const transactions = S.data.txs || [];
+  const rows = [['Date','Transaction ID','Recipient / Sender','Description','Direction','Amount GBP','Status','Category','Payment Reference','IBAN']];
+  transactions.forEach(tx => {
+    rows.push([fmtDate(tx.createdAt), tx.id || '', tx.who || '', tx.title || '', tx.dir || '', tx.amount || 0, tx.status || '', tx.category || '', tx.ref || '', tx.iban || '']);
+  });
+  const csv = '\uFEFF' + rows.map(r => r.map(csvSafe).join(',')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url; link.download = 'CMSC-transactions.csv';
+  document.body.appendChild(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast(t('export'));
+}
+function transactionDetailMarkup(tx) {
+  const incoming = tx.dir === 'in';
+  return `
+    <div class="detail-top">
+      <div><div class="eyebrow">${esc(t('details'))}</div><h2 style="margin-top: 8px">${esc(tx.title || t('paymentType'))}</h2></div>
+      <button class="detail-close" data-action="closeDrawer" aria-label="${esc(t('close'))}">×</button>
+    </div>
+    <div class="eyebrow">${esc(t('amount'))}</div>
+    <div class="detail-value ${incoming ? 'positive' : ''}">${incoming ? '+' : '−'}${money(tx.amount)}</div>
+    <div style="margin-bottom: 30px">
+      <span class="tag ${tx.status === 'scheduled' ? 'warning' : tx.status === 'posted' ? 'success' : ''}">${esc(t(tx.status || 'posted'))}</span>
+    </div>
+    ${[
+      [t('recipient'), tx.who || '—'], [t('transactionDate'), fmtDate(tx.createdAt)],
+      [t('transactionId'), tx.id || '—'], [t('category'), tx.category || '—'],
+      [t('status'), t(tx.status || 'posted')], [t('reference'), tx.ref || '—'],
+      [t('iban'), tx.iban || '—'],
+      ...(tx.scheduledDate ? [[t('date'), tx.scheduledDate]] : []),
+      ...(tx.declineReason ? [['Decline reason', tx.declineReason]] : [])
+    ].map(([label, value]) => `
+      <div class="detail-line"><span>${esc(label)}</span><strong>${esc(value)}</strong></div>
+    `).join('')}
+    <div class="notice">${esc(t('paymentNote'))}</div>
+  `;
+}
+function openTransactionDrawer(index) {
+  const tx = (S.data.txs || [])[index];
+  if (!tx) return;
+  openDetailDrawer(transactionDetailMarkup(tx));
+}
+
+/* ============================================================
+   PAYEES
+   ============================================================ */
+function beneficiariesView() {
+  const payees = S.data.payees || [];
+  return `
+    ${breadcrumbs([{ label: 'Home', page: 'overview' }, { label: 'Payees' }])}
+    ${pageHead(t('saved'), t('savedSub'),
+      `<button class="btn" data-page="payments">+ ${esc(t('send'))}</button>`)}
+    <section class="panel">
+      ${payees.length ? payees.map(p => `
+        <div class="payee">
+          <div class="row" style="justify-content: flex-start; min-width: 0">
+            <div class="avatar">${esc((p.name || 'DB').split(/\s+/).map(x => x[0] || '').slice(0, 2).join('').toUpperCase())}</div>
+            <div style="min-width: 0"><strong>${esc(p.name)}</strong><small>${esc(p.iban)}</small></div>
+          </div>
+          <div class="row" style="flex-wrap: wrap; justify-content: flex-end">
+            <button class="btn ghost small" data-select-payee="${esc(p.id)}">${esc(t('pay'))}</button>
+            <button class="btn ghost small" data-remove-payee="${esc(p.id)}">${esc(t('remove'))}</button>
+          </div>
+        </div>
+      `).join('') : `<div class="empty">${esc(t('noPayees'))}</div>`}
+    </section>
+  `;
+}
+async function removeBeneficiary(id) {
+  if (S.busy) return;
+  const payee = (S.data.payees || []).find(p => p.id === id);
+  if (!payee) return;
+  if (!confirm(`Remove payee "${payee.name}"?`)) return;
+  S.busy = true;
+  try {
+    const response = await api('removePayee', { id });
+    S.data = response.state; render(); toast('Payee removed.');
+  } catch (error) { toast(error.message); }
+  finally { S.busy = false; }
+}
+
+/* ============================================================
+   DOCUMENTS
+   ============================================================ */
+function documentsView() {
+  const docs = S.data.documents || [];
+  return `
+    ${breadcrumbs([{ label: 'Home', page: 'overview' }, { label: 'Documents' }])}
+    ${pageHead(t('documentsTitle'), t('documentsSub'))}
+    <div class="grid two">
+      <section class="panel">
+        <h2>${esc(t('uploadDocument'))}</h2>
+        <p class="tiny" style="margin-bottom: 20px">${esc(t('dropzoneHint'))}</p>
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-icon">▤</div>
+          <strong style="display: block; font-size: 18px; margin-bottom: 8px;">${esc(t('dropzoneText'))}</strong>
+          <span class="tiny muted">PDF, JPG, PNG up to 2MB</span>
+          <input type="file" id="fileInput" style="display: none;" accept=".pdf,.jpg,.jpeg,.png">
+        </div>
+        <div id="uploadError" class="error hidden" style="margin-top: 16px;"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head">
+          <h2>${esc(t('documents'))}</h2>
+          <span class="tag">${docs.length} FILES</span>
+        </div>
+        <div class="doc-list">
+          ${docs.length ? docs.map(doc => `
+            <div class="doc-item">
+              <div class="doc-info">
+                <div class="doc-icon">▤</div>
+                <div><div class="doc-name">${esc(doc.name)}</div><div class="doc-meta">${(doc.size / 1024).toFixed(1)} KB · ${fmtDate(doc.uploadedAt)}</div></div>
+              </div>
+              <div class="doc-actions">
+                <button class="btn ghost small" data-download-doc="${esc(doc.id)}">${esc(t('downloadDoc'))}</button>
+                <button class="btn ghost small" data-delete-doc="${esc(doc.id)}" style="color: var(--error); border-color: var(--error);">${esc(t('deleteDoc'))}</button>
+              </div>
+            </div>
+          `).join('') : `<div class="empty">${esc(t('noDocuments'))}</div>`}
+        </div>
+      </section>
+    </div>
+  `;
+}
+function handleFileUpload(file) {
+  if (file.size > DEMO.MAX_DOC_SIZE) { showFormError('uploadError', t('uploadError')); return; }
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    S.busy = true;
+    try {
+      const response = await api('uploadDocument', { name: file.name, type: file.type, size: file.size, data: e.target.result });
+      S.data = response.state; render(); toast(t('uploadSuccess'));
+    } catch (error) { showFormError('uploadError', error.message); }
+    finally { S.busy = false; }
+  };
+  reader.readAsDataURL(file);
+}
+function setupDropzone() {
+  const dropzone = $('dropzone');
+  const fileInput = $('fileInput');
+  if (!dropzone || !fileInput) return;
+  dropzone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => { if (e.target.files.length > 0) handleFileUpload(e.target.files[0]); });
+  dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault(); dropzone.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) handleFileUpload(e.dataTransfer.files[0]);
+  });
+}
+async function deleteDocument(id) {
+  if (S.busy) return;
+  if (!confirm('Delete this document?')) return;
+  S.busy = true;
+  try {
+    const response = await api('deleteDocument', { id });
+    S.data = response.state; render(); toast(t('docDeleted'));
+  } catch (error) { toast(error.message); }
+  finally { S.busy = false; }
+}
+function downloadDocument(id) {
+  const doc = (S.data.documents || []).find(d => d.id === id);
+  if (!doc) return;
+  const link = document.createElement('a');
+  link.href = doc.data; link.download = doc.name;
+  document.body.appendChild(link); link.click(); link.remove();
+}
+
+/* ============================================================
+   TAX CALCULATOR (flat 14.7% rate)
+   ============================================================ */
+function taxCalculatorView() {
+  const TAX_RATE = 0.147; // 14.7% flat rate
+  let resultHtml = '';
+  if (S.taxData && S.taxData.income > 0) {
+    const { income, frequency } = S.taxData;
+    let annualGross = income;
+    if (frequency === 'monthly') annualGross = income * 12;
+    if (frequency === 'weekly') annualGross = income * 52;
+    const incomeTax = annualGross * TAX_RATE;
+    const ni = 0; // National Insurance not applied in this estimate
+    const annualTakeHome = annualGross - incomeTax - ni;
+    const divisor = frequency === 'monthly' ? 12 : frequency === 'weekly' ? 52 : 1;
+    const gross = annualGross / divisor, tax = incomeTax / divisor, nic = ni / divisor, takeHome = annualTakeHome / divisor;
+    const freqLabel = frequency === 'monthly' ? t('taxMonth') : frequency === 'weekly' ? t('taxWeek') : t('taxYear');
+    resultHtml = `
+      <div class="tax-results">
+        <h2 style="margin-bottom: 24px;">${esc(t('taxResults'))}</h2>
+        <div class="tax-result-row"><span>${esc(t('taxGross'))}</span><strong>${money(gross)}</strong></div>
+        <div class="tax-result-row"><span>${esc(t('taxTax'))} (14.7%)</span><strong>−${money(tax)}</strong></div>
+        <div class="tax-result-row"><span>${esc(t('taxNI'))}</span><strong>−${money(nic)}</strong></div>
+        <div class="tax-result-row"><span>${esc(t('taxTakeHome'))}</span><strong>${money(takeHome)}</strong></div>
+        <p class="tiny muted" style="margin-top:16px">${esc(freqLabel)}</p>
+      </div>
+    `;
+  }
+
+  const selectedFrequency = S.taxData?.frequency || 'yearly';
+  return `
+    ${breadcrumbs([{ label: 'Home', page: 'overview' }, { label: t('tax') }])}
+    ${pageHead(t('taxTitle'), t('taxSub'))}
+    <div class="grid two">
+      <section class="panel">
+        <div class="tax-step">
+          <div class="tax-step-title">1. ${esc(t('taxPayFrequency'))}</div>
+          <div class="tax-radio-group" id="taxFrequencyGroup">
+            ${[['yearly', t('taxYearly')], ['monthly', t('taxMonthly')], ['weekly', t('taxWeekly')]].map(([value, label]) => `
+              <label class="tax-radio-label ${selectedFrequency === value ? 'selected' : ''}">
+                <input type="radio" name="taxFrequency" value="${value}" ${selectedFrequency === value ? 'checked' : ''}>
+                <span>${esc(label)}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+        <div class="tax-step">
+          <div class="tax-step-title">2. ${esc(t('taxAmount'))}</div>
+          <div class="tax-input-group">
+            <span>£</span>
+            <input id="taxIncome" type="number" min="0" step="0.01" inputmode="decimal"
+              value="${S.taxData ? esc(S.taxData.income) : ''}" placeholder="35000"
+              aria-label="${esc(t('taxAmount'))}">
+          </div>
+          <button class="btn" id="taxCalculateBtn">${esc(t('taxCalculate'))}</button>
+        </div>
+      </section>
+      <section>
+        ${resultHtml || `<div class="panel"><div class="empty">Enter an amount and calculate to see your take-home pay.</div></div>`}
+      </section>
+    </div>
+  `;
+}
+
+/* ============================================================
+   MESSAGES
+   ============================================================ */
+function notificationsView() {
+  const items = S.data.notifications || [];
+  return `
+    ${breadcrumbs([{ label: 'Home', page: 'overview' }, { label: t('inbox') }])}
+    ${pageHead(t('inbox'), t('inboxSub'),
+      `<button class="btn ghost" data-action="markAllRead">${esc(t('readAll'))}</button>`)}
+    <section class="panel">
+      ${items.length ? items.map(n => `
+        <div class="payee">
+          <div style="min-width:0">
+            <strong>${esc(n.title)}${n.read ? '' : ' <span class="tag warning">NEW</span>'}</strong>
+            <small>${esc(n.body)}</small>
+            <div class="tiny muted">${fmtDate(n.createdAt)}</div>
+          </div>
+          <button class="btn ghost small" data-delete-notif="${esc(n.id)}">Delete</button>
+        </div>
+      `).join('') : `<div class="empty">${esc(t('noNotifications'))}</div>`}
+      <div class="notice">${esc(t('notificationNotice'))}</div>
+    </section>
+  `;
+}
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+function settingsView() {
+  const account = S.data.account || {};
+  return `
+    ${breadcrumbs([{ label: 'Home', page: 'overview' }, { label: t('profile') }])}
+    ${pageHead(t('profile'), t('profileSub'))}
+    <div class="grid two">
+      <section class="panel">
+        <h2>${esc(t('account'))}</h2>
+        <div class="reviewline"><span>${esc(t('holder'))}</span><strong>${esc(account.holder || '—')}</strong></div>
+        <div class="reviewline"><span>IBAN</span><strong>Not assigned</strong></div>
+        <div class="reviewline"><span>Contact CMSC</span><strong><a href="mailto:contact@cms-commission.com" style="color:var(--link); text-decoration:none;">contact@cms-commission.com</a></strong></div>
+        <div class="reviewline"><span>${esc(t('currency'))}</span><strong>GBP</strong></div>
+        <div class="reviewline"><span>${esc(t('session'))}</span><strong>${esc(S.data.session?.username || '—')}</strong></div>
+        <div class="space"></div>
+        <button class="btn ghost" data-action="copyIban">${esc(t('copy'))}</button>
+      </section>
+      <section class="panel">
+        <h2>${esc(t('profile'))}</h2>
+        <div class="reviewline"><span>${esc(t('language'))}</span><strong>EN</strong></div>
+        <div class="reviewline"><span>${esc(t('theme'))}</span><strong>${S.theme === 'dark' ? 'Dark' : 'Light'}</strong></div>
+        <div class="space"></div>
+        <div class="row" style="justify-content: flex-start; gap: 12px;">
+          <button class="btn ghost" data-action="theme">${esc(t('theme'))}</button>
+          <button class="btn ghost" data-action="logout">${esc(t('logout'))}</button>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+/* ============================================================
+   DETAIL DRAWER
+   ============================================================ */
+function openDetailDrawer(html) {
+  closeDetailDrawer();
+  const wrap = document.createElement('div');
+  wrap.className = 'detail-backdrop';
+  wrap.id = 'detailDrawer';
+  wrap.innerHTML = `<div class="detail-drawer" role="dialog" aria-modal="true">${html}</div>`;
+  document.body.appendChild(wrap);
+  wrap.addEventListener('click', (e) => {
+    if (e.target === wrap) closeDetailDrawer();
+    if (e.target.closest('[data-action="closeDrawer"]')) closeDetailDrawer();
+  });
+  document.addEventListener('keydown', escCloseDrawer);
+}
+function closeDetailDrawer() {
+  document.getElementById('detailDrawer')?.remove();
+  document.removeEventListener('keydown', escCloseDrawer);
+}
+function escCloseDrawer(e) { if (e.key === 'Escape') closeDetailDrawer(); }
+
+/* ============================================================
+   DELETE TRANSACTION
+   ============================================================ */
+async function deleteTransaction(id) {
+  if (S.busy) return;
+  if (!confirm('Delete this transaction? This cannot be undone.')) return;
+  S.busy = true;
+  try {
+    const response = await api('deleteTransaction', { id });
+    S.data = response.state;
+    render();
+    toast('Transaction deleted.');
+  } catch (error) {
+    toast(error.message || 'Unable to delete transaction.');
+  } finally {
+    S.busy = false;
+  }
+}
+
+/* ============================================================
+   RENDER / ROUTER
+   ============================================================ */
+function navigate(page) {
+  S.page = page;
+  S.step = 1;
+  if (page !== 'payments') S.draft = null;
+  render();
+  window.scrollTo(0, 0);
+}
+
+function render() {
+  if (!S.data) {
+    app.innerHTML = loginView();
+  } else {
+    app.innerHTML = shellView();
+    const main = $('main');
+    if (!main) return;
+    switch (S.page) {
+      case 'overview': main.innerHTML = dashboardView(); drawSpendingChart(); break;
+      case 'transactions': main.innerHTML = transactionHistoryView(); break;
+      case 'payments': main.innerHTML = paymentView(); break;
+      case 'beneficiaries': main.innerHTML = beneficiariesView(); break;
+      case 'documents': main.innerHTML = documentsView(); setupDropzone(); break;
+      case 'tax': main.innerHTML = taxCalculatorView(); break;
+      case 'notifications': main.innerHTML = notificationsView(); break;
+      case 'settings': main.innerHTML = settingsView(); break;
+      default: main.innerHTML = dashboardView(); drawSpendingChart();
+    }
+  }
+  attachGlobalHandlers();
+}
+
+/* ============================================================
+   GLOBAL EVENT DELEGATION
+   ============================================================ */
+function attachGlobalHandlers() {
+  // Login
+  $('loginForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = $('username')?.value || '';
+    const password = $('password')?.value || '';
+    try {
+      const result = await api('login', { username, password });
+      S.token = result.token;
+      S.data = await api('getState');
+      S.page = 'overview';
+      render();
+    } catch (err) {
+      showFormError('loginError', err.message);
+    }
+  });
+
+  // Global search
+  $('globalSearchForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    toast('Search is not available in this demo.');
+  });
+
+  // Delegated clicks
+  app.addEventListener('click', (e) => {
+    const pageBtn = e.target.closest('[data-page]');
+    if (pageBtn) { e.preventDefault(); navigate(pageBtn.dataset.page); return; }
+
+    const actionBtn = e.target.closest('[data-action]');
+    if (actionBtn) {
+      const action = actionBtn.dataset.action;
+      if (action === 'logout') { api('logout'); S.data = null; S.token = ''; render(); }
+      if (action === 'theme') {
+        S.theme = S.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = S.theme;
+        localStorage.setItem('cmsc_theme', S.theme);
+        render();
+      }
+      if (action === 'exportTransactions') exportTransactions();
+      if (action === 'paymentBack') paymentBack();
+      if (action === 'confirmPayment') confirmPayment();
+      if (action === 'newPayment') newPayment();
+      if (action === 'cancelGoal') cancelGoalForm();
+      if (action === 'cancelContribution') cancelContributionForm();
+      if (action === 'markAllRead') {
+        api('markNotifsRead').then(r => { S.data = r.state; render(); });
+      }
+      if (action === 'copyIban') {
+        navigator.clipboard?.writeText('Not assigned').catch(() => {});
+        toast(t('copied'));
+      }
+      return;
+    }
+
+    const periodBtn = e.target.closest('[data-period]');
+    if (periodBtn) { S.period = periodBtn.dataset.period; render(); return; }
+
+    const payeeBtn = e.target.closest('[data-select-payee]');
+    if (payeeBtn) { selectSavedPayee(payeeBtn.dataset.selectPayee); return; }
+
+    const removePayeeBtn = e.target.closest('[data-remove-payee]');
+    if (removePayeeBtn) { removeBeneficiary(removePayeeBtn.dataset.removePayee); return; }
+
+    const deleteTxBtn = e.target.closest('[data-delete-tx]');
+    if (deleteTxBtn) {
+      e.stopPropagation();
+      deleteTransaction(deleteTxBtn.dataset.deleteTx);
+      return;
+    }
+
+    const docDownload = e.target.closest('[data-download-doc]');
+    if (docDownload) { downloadDocument(docDownload.dataset.downloadDoc); return; }
+
+    const docDelete = e.target.closest('[data-delete-doc]');
+    if (docDelete) { deleteDocument(docDelete.dataset.deleteDoc); return; }
+
+    const notifDelete = e.target.closest('[data-delete-notif]');
+    if (notifDelete) {
+      api('deleteNotification', { id: notifDelete.dataset.deleteNotif })
+        .then(r => { S.data = r.state; render(); })
+        .catch(err => toast(err.message));
+      return;
+    }
+
+    const txRow = e.target.closest('[data-tx-index]');
+    if (txRow) { openTransactionDrawer(Number(txRow.dataset.txIndex)); return; }
+
+    const contributeBtn = e.target.closest('[data-contribute-goal]');
+    if (contributeBtn) { showContributionForm(contributeBtn.dataset.contributeGoal); return; }
+  });
+
+  // Payment details form
+  $('paymentDetailsForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    submitPaymentDetails();
+  });
+
+  // Payment timing toggle
+  $('paymentWhen')?.addEventListener('change', (e) => {
+    const field = $('scheduleField');
+    if (field) field.classList.toggle('hidden', e.target.value !== 'schedule');
+  });
+
+  // Transactions search + filter
+  $('transactionSearch')?.addEventListener('input', (e) => {
+    S.search = e.target.value;
+    updateTransactionResults();
+  });
+  $('transactionFilter')?.addEventListener('change', (e) => {
+    S.filter = e.target.value;
+    updateTransactionResults();
+  });
+
+  // Tax calculator
+  $('taxFrequencyGroup')?.addEventListener('change', (e) => {
+    if (e.target.name === 'taxFrequency') {
+      S.taxData = { ...(S.taxData || {}), frequency: e.target.value };
+      document.querySelectorAll('.tax-radio-label').forEach(l => l.classList.remove('selected'));
+      e.target.closest('.tax-radio-label')?.classList.add('selected');
+    }
+  });
+  $('taxCalculateBtn')?.addEventListener('click', () => {
+    const income = Number($('taxIncome')?.value || 0);
+    const frequency = document.querySelector('input[name="taxFrequency"]:checked')?.value || 'yearly';
+    if (!Number.isFinite(income) || income <= 0) { toast('Enter a valid amount.'); return; }
+    S.taxData = { income, frequency };
+    render();
+  });
+
+  // Create / contribute goal forms
+  $('createGoalForm')?.addEventListener('submit', (e) => { e.preventDefault(); submitCreateGoal(); });
+  $('contributeGoalForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    submitContribution(e.target.dataset.goalId);
+  });
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+(async function boot() {
+  if (S.token) {
+    try {
+      S.data = await api('getState');
+    } catch (err) {
+      sessionStorage.removeItem('cmsc_token');
+      S.token = '';
+      S.data = null;
+    }
+  }
+  render();
+})();
+
+</script>
+</body>
+</html>
