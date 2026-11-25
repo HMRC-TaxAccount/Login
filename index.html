@@ -4,7 +4,7 @@
 <base target="_top">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CMSC · Private Wealth Portal</title>
+<title>HMRC· Private Wealth Portal</title>
 
 <style>
 /* ============================================================
@@ -827,7 +827,7 @@ button:disabled, .btn:disabled {
 'use strict';
 
 /* ============================================================
-   CMSC PRIVATE WEALTH PORTAL
+   HMRC PRIVATE WEALTH PORTAL
    ============================================================ */
 
 const DEMO = {
@@ -930,7 +930,7 @@ const EN = {
   paymentType: 'Transfer',
   paymentNote: 'Make sure the details are correct.',
   available: 'Available',
-  simulation: 'CMSC Private Wealth is a demonstration environment. No real money moves and no real client data is held.',
+  simulation: 'HMRC Private Wealth is a banking environment.',
   notificationNotice: 'Messages are generated within this account.',
   netWorth: 'Total net worth',
   netWorthSub: 'Your complete financial position, in one place.',
@@ -1100,10 +1100,10 @@ function createAccount() {
     },
     txs: [
       {
-        id: 'CMSC-20261117-001',
+        id: 'HMRC-20261117-001',
         createdAt: Date.UTC(2026, 10, 17, 10, 0, 0), // 17 Nov 2026
         title: 'Incoming transfer',
-        who: 'CMSC',
+        who: 'HMRC',
         amount: 298797.40,
         dir: 'in',
         status: 'posted',
@@ -1381,8 +1381,8 @@ function globalSearchBar() {
     <div class="global-search">
       <div class="global-search__inner">
         <form id="globalSearchForm" role="search" style="display:flex;flex:1;">
-          <label for="globalSearch" class="hidden">Search CMSC</label>
-          <input id="globalSearch" type="search" placeholder="Search CMSC services, guidance and forms" autocomplete="off">
+          <label for="globalSearch" class="hidden">Search HMRC</label>
+          <input id="globalSearch" type="search" placeholder="Search HMRC services, guidance and forms" autocomplete="off">
           <button type="submit">Search</button>
         </form>
       </div>
@@ -1989,7 +1989,7 @@ function exportTransactions() {
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
-  link.href = url; link.download = 'CMSC-transactions.csv';
+  link.href = url; link.download = 'HMRC-transactions.csv';
   document.body.appendChild(link); link.click(); link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
   toast(t('export'));
